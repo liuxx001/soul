@@ -1,19 +1,18 @@
 /*
+ *   Licensed to the Apache Software Foundation (ASF) under one or more
+ *   contributor license agreements.  See the NOTICE file distributed with
+ *   this work for additional information regarding copyright ownership.
+ *   The ASF licenses this file to You under the Apache License, Version 2.0
+ *   (the "License"); you may not use this file except in compliance with
+ *   the License.  You may obtain a copy of the License at
  *
- *  * Licensed to the Apache Software Foundation (ASF) under one or more
- *  * contributor license agreements.  See the NOTICE file distributed with
- *  * this work for additional information regarding copyright ownership.
- *  * The ASF licenses this file to You under the Apache License, Version 2.0
- *  * (the "License"); you may not use this file except in compliance with
- *  * the License.  You may obtain a copy of the License at
- *  *
- *  *     http://www.apache.org/licenses/LICENSE-2.0
- *  *
- *  * Unless required by applicable law or agreed to in writing, software
- *  * distributed under the License is distributed on an "AS IS" BASIS,
- *  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *  * See the License for the specific language governing permissions and
- *  * limitations under the License.
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *   Unless required by applicable law or agreed to in writing, software
+ *   distributed under the License is distributed on an "AS IS" BASIS,
+ *   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *   See the License for the specific language governing permissions and
+ *   limitations under the License.
  *
  */
 
@@ -267,6 +266,9 @@ public class ZookeeperCacheManager implements CommandLineRunner, DisposableBean 
     private void setSelectorMapByKey(final String key, final SelectorZkDTO selectorZkDTO) {
         Optional.ofNullable(key)
                 .ifPresent(k -> {
+                    if (selectorZkDTO.getPluginName().equals(PluginEnum.DIVIDE.getName())) {
+                        UpstreamCacheManager.submit(selectorZkDTO);
+                    }
                     if (SELECTOR_MAP.containsKey(k)) {
                         final List<SelectorZkDTO> selectorZkDTOList = SELECTOR_MAP.get(key);
                         final List<SelectorZkDTO> resultList = selectorZkDTOList.stream()
@@ -291,6 +293,9 @@ public class ZookeeperCacheManager implements CommandLineRunner, DisposableBean 
                 Optional.ofNullable(data)
                         .ifPresent(d -> {
                             SelectorZkDTO dto = (SelectorZkDTO) d;
+                            if (dto.getPluginName().equals(PluginEnum.DIVIDE.getName())) {
+                                UpstreamCacheManager.submit(dto);
+                            }
                             final String key = dto.getPluginName();
                             final List<SelectorZkDTO> selectorZkDTOList = SELECTOR_MAP.get(key);
                             if (CollectionUtils.isNotEmpty(selectorZkDTOList)) {
@@ -324,9 +329,6 @@ public class ZookeeperCacheManager implements CommandLineRunner, DisposableBean 
     private void setRuleMapByKey(final String key, final RuleZkDTO ruleZkDTO) {
         Optional.ofNullable(key)
                 .ifPresent(k -> {
-                    if (ruleZkDTO.getName().equals(PluginEnum.DIVIDE.getName())) {
-                        UpstreamCacheManager.submit(ruleZkDTO);
-                    }
                     if (RULE_MAP.containsKey(k)) {
                         final List<RuleZkDTO> ruleZkDTOList = RULE_MAP.get(key);
                         final List<RuleZkDTO> resultList = ruleZkDTOList.stream()
@@ -352,9 +354,6 @@ public class ZookeeperCacheManager implements CommandLineRunner, DisposableBean 
                 Optional.ofNullable(data)
                         .ifPresent(d -> {
                             RuleZkDTO dto = (RuleZkDTO) d;
-                            if (dto.getName().equals(PluginEnum.DIVIDE.getName())) {
-                                UpstreamCacheManager.submit(dto);
-                            }
                             final String key = dto.getSelectorId();
                             final List<RuleZkDTO> ruleZkDTOList = RULE_MAP.get(key);
                             if (CollectionUtils.isNotEmpty(ruleZkDTOList)) {
